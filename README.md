@@ -18,7 +18,7 @@
 ## Запуск локально
 
 Нужен Python 3.10+.
-
+```base
 python -m venv venv
 # Windows:
 venv\\Scripts\\activate

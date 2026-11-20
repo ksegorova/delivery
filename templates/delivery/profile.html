@@ -1,0 +1,47 @@
+{% extends 'delivery/base.html' %}
+{% block title %}Личный кабинет — ЕдаРядом{% endblock %}
+{% block content %}
+<section class="page-top">
+    <div class="container">
+        <span class="eyebrow">ВАШ ПРОФИЛЬ</span>
+        <h1>Привет, {{ user.username }}!</h1>
+        <p>{{ user.email }}</p>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="btn btn-outline" type="submit">Выйти</button>
+        </form>
+    </div>
+</section>
+<section class="container section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">ИСТОРИЯ</span>
+            <h2>Ваши заказы</h2>
+        </div>
+        <a class="btn" href="{% url 'catalog' %}">Новый заказ</a>
+    </div>
+    <div class="orders">
+        {% for order in orders %}
+        <article class="order-card">
+            <div>
+                <small>Заказ №{{ order.id }} · {{ order.created_at|date:'d.m.Y H:i' }}</small>
+                <h2>{{ order.restaurant.name }}</h2>
+                <p>{{ order.address }}</p>
+            </div>
+            <div class="order-status">
+                <span>{{ order.get_status_display }}</span>
+                <strong>{{ order.total|floatformat:0 }} ₽</strong>
+                <small>Приготовление: до {{ order.preparation_minutes }} мин</small>
+            </div>
+        </article>{% empty %}
+            <div class="empty-state">
+                <span>🛍</span>
+                <h2>Заказов пока нет</h2>
+                <p>Выберите ресторан и оформите первый заказ.</p>
+                <a class="btn" href="{% url 'catalog' %}">Перейти в каталог</a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+

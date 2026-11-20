@@ -1,0 +1,61 @@
+{% extends 'delivery/base.html' %}
+{% block title %}
+{{ restaurant.name }} — меню{% endblock %}
+{% block content %}
+<form hidden>{% csrf_token %}</form>
+<section class="page-top">
+    <div class="container">
+        <a class="back-link" href="{% url 'catalog' %}">← Все рестораны</a>
+        <span class="eyebrow">{{ restaurant.cuisine }}</span>
+        <h1>{{ restaurant.name }}</h1>
+        <p>{{ restaurant.description }}</p>
+        <div class="restaurant-facts">
+            <span>★ {{ restaurant.rating|floatformat:1 }}</span>
+            <span>Доставка ~{{ restaurant.delivery_minutes }} мин</span>
+            <span>Минимум {{ restaurant.minimum_order|floatformat:0 }} ₽</span>
+            <span>{{ restaurant.delivery_zone.name }}</span>
+        </div>
+    </div>
+</section>
+<section class="container section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">МЕНЮ</span>
+            <h2>Выберите блюда</h2>
+        </div>
+        <p class="muted">Корзина формируется из одного ресторана</p>
+    </div>
+    {% for category in categories %}
+    <section class="menu-section">
+        <h2>{{ category.name }}</h2>
+        <div class="dish-grid">
+            {% for dish in dishes %}
+            {% if dish.category_id == category.id %}
+            <article class="dish-card">
+                <div class="dish-art">
+                    {% if dish.image %}
+                    <img src="{{ dish.image.url }}" alt="{{ dish.name }}" width="240" height="240" loading="lazy">
+                    {% else %}
+                    <span aria-hidden="true">{% cycle '🍕' '🍔' '🍣' '🍜' '🍰' %}</span>
+                    {% endif %}
+                </div>
+                <div class="dish-info">
+                    <h3>{{ dish.name }}</h3>
+                    <p>{{ dish.description|truncatechars:90 }}</p>
+                    <small>{{ dish.weight }} · {{ dish.cooking_minutes }} мин</small>
+                    <div class="dish-bottom">
+                        <strong>{{ dish.price|floatformat:0 }} ₽</strong>
+                        <button class="add-btn" data-dish-id="{{ dish.id }}" type="button">+ В корзину</button>
+                    </div>
+                </div>
+            </article>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+    {% empty %}
+    <p>Меню пока не заполнено.</p>
+    {% endfor %}
+</section>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+{% endblock %}

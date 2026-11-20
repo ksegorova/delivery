@@ -1,0 +1,88 @@
+{% extends 'delivery/base.html' %}
+{% block title %}ЕдаРядом — вкусное рядом{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <span class="eyebrow">ЕДА БЛИЖЕ, ЧЕМ КАЖЕТСЯ</span>
+            <h1>Любимые блюда —<br><em>прямо к двери</em></h1>
+            <p>Выбирайте рестораны, собирайте заказ и следите за его статусом. 
+                Просто, понятно и без лишних шагов.</p>
+                <form class="hero-search" action="{% url 'search' %}" method="get">
+                    <label class="sr-only" for="hero-q">Найти блюдо или ресторан</label>
+                    <input id="hero-q" name="q" placeholder="Пицца, суши, бургер…">
+                    <button class="btn" type="submit">Найти</button>
+                </form>
+                <a class="text-link" href="{% url 'catalog' %}">Смотреть все рестораны →</a>
+            </div>
+            <div class="hero-art" aria-label="Иллюстрация доставки еды">
+                <div class="art-circle"></div>
+                <div class="food-emoji" aria-hidden="true">🍝</div>
+                <div class="art-note note-one">Свежеприготовлено</div>
+                <div class="art-note note-two">Уже в пути</div>
+            </div>
+        </div>
+    </section>
+<section class="section container">
+    <div class="section-head">
+        <div><span class="eyebrow">ВЫБИРАЙТЕ ПО ВКУСУ</span>
+            <h2>Популярные категории</h2>
+        </div>
+        <a class="text-link" href="{% url 'catalog' %}">Весь каталог →</a>
+    </div>
+    <div class="category-row">
+        {% for category in categories %}
+        <a class="category-chip" href="{% url 'catalog' %}?category={{ category.slug }}">
+            <span>{{ forloop.counter|add:0|floatformat:0 }}</span>
+            {{ category.name }}
+        </a>
+            {% empty %}
+            <p>Категории появятся после заполнения каталога.</p>
+            {% endfor %}
+        </div>
+    </section>
+<section class="section section-soft">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">МЕСТА, КОТОРЫЕ ВЫБИРАЮТ</span>
+                <h2>Популярные рестораны</h2></div>
+                <a class="text-link" href="{% url 'catalog' %}">Все рестораны →</a>
+            </div>
+            <div class="restaurant-grid">
+                {% for restaurant in restaurants %}
+                <article class="restaurant-card">
+                    <a class="restaurant-visual visual-{{ forloop.counter }}" 
+                        href="{% url 'restaurant_detail' restaurant.slug %}" 
+                        aria-label="Открыть {{ restaurant.name }}">
+                        {% if restaurant.image %}
+                        <img src="{{ restaurant.image.url }}" alt="Блюда ресторана {{ restaurant.name }}" width="400" height="260" loading="lazy">
+                        {% endif %}
+                        <span>
+                           {{ restaurant.cuisine }}
+                        </span>
+                        <strong>
+                            {{ restaurant.name|slice:':1' }}
+                        </strong>
+                    </a>
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h3><a href="{% url 'restaurant_detail' restaurant.slug %}">{{ restaurant.name }}</a></h3>
+                            <span class="rating"> 
+                                {{ restaurant.rating|floatformat:1 }}
+                            </span>
+                        </div>
+                        <p>{{ restaurant.description|truncatechars:78 }}</p>
+                        <div class="card-meta">
+                            <span>+- {{ restaurant.delivery_minutes }} мин</span>
+                            <span>От {{ restaurant.minimum_order|floatformat:0 }} ₽</span>
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <p>Пока нет ресторанов. Выполните команду <code>python manage.py seed_demo</code>.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

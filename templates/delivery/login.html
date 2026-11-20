@@ -1,0 +1,29 @@
+{% extends 'delivery/base.html' %}
+{% block title %}Вход — ЕдаРядом{% endblock %}
+{% block content %}
+<section class="container form-wrap section">
+    <div class="form-card">
+        <span class="eyebrow">С ВОЗВРАЩЕНИЕМ</span>
+        <h1>Войти</h1>
+        <form method="post" class="validate-form">
+            {% csrf_token %}
+            {% if form.errors %}
+            <p class="field-error">Проверьте имя пользователя и пароль.</p>
+            {% endif %}
+            {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="field-error">
+                    {{ field.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button class="btn btn-block" type="submit">Войти в аккаунт</button>
+        </form>
+        <p class="form-foot">Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+    </div>
+</section>
+{% endblock %}

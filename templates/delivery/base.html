@@ -1,0 +1,53 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ЕдаРядом — доставка еды из ресторанов города">
+  <title>{% block title %}ЕдаРядом — доставка еды{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <script defer src="{% static 'js/main.js' %}"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="logo" href="{% url 'home' %}" aria-label="ЕдаРядом — главная">
+      <span class="logo-mark">Е</span>еда<span>рядом</span></a>
+    <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="main-nav" aria-label="Основная навигация">
+      <a href="{% url 'catalog' %}">Рестораны</a>
+      <a href="{% url 'about' %}">О проекте</a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'profile' %}">Профиль</a>
+      {% else %}
+      <a href="{% url 'login' %}">Войти</a>
+      {% endif %}
+      <a class="nav-cart" href="{% url 'cart' %}">Корзина 
+        <span id="cart-count">{{ request.session.cart|length|default:0 }}</span>
+      </a>
+    </nav>
+  </div>
+</header>
+{% if messages %}
+<div class="container messages">
+  {% for message in messages %}
+  <p class="message {{ message.tags }}">{{ message }}</p>
+  {% endfor %}
+</div>
+{% endif %}
+<main>
+  {% block content %}
+  {% endblock %}
+</main>
+<footer class="site-footer">
+  <div class="container footer-row">
+    <a class="logo footer-logo" href="{% url 'home' %}">
+      <span class="logo-mark">Е</span>еда<span>рядом</span></a><p>Доставка из ресторанов рядом с вами</p>
+      <nav aria-label="Дополнительная навигация">
+        <a href="{% url 'catalog' %}">Каталог</a>
+        <a href="{% url 'about' %}">О проекте</a>
+      </nav>
+    <small>© 2026 ЕдаРядом · Учебный проект</small>
+  </div>
+  </footer>
+</body></html>

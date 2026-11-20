@@ -1,0 +1,47 @@
+{% extends 'delivery/base.html' %}
+{% block title %}Корзина — ЕдаРядом{% endblock %}
+{% block content %}
+<section class="page-top">
+    <div class="container">
+        <span class="eyebrow">ПОЧТИ ГОТОВО</span>
+        <h1>Корзина</h1>
+        <p>{% if restaurant %}Ресторан: {{ restaurant.name }}{% else %}Здесь появятся выбранные блюда{% endif %}</p>
+    </div>
+</section>
+<section class="container section cart-layout">
+    <div>
+        {% for item in items %}
+        <article class="cart-item">
+            <div class="result-icon" aria-hidden="true">🍽</div>
+            <div><h2>{{ item.name }}</h2>
+                <p>{{ item.qty }} × {{ item.price }} ₽</p>
+            </div>
+            <strong>
+                {{ item.line }} ₽
+            </strong>
+                <a class="remove-link" href="{% url 'cart_remove' item.id %}">Убрать</a>
+            </article>
+            {% empty %}
+            <div class="empty-state">
+                <span>🛒</span>
+                <h2>Корзина пуста</h2>
+                <p>Добавьте блюда из меню ресторана.</p>
+                <a class="btn" href="{% url 'catalog' %}">Выбрать ресторан</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% if items %}
+        <aside class="summary-card">
+            <h2>Ваш заказ</h2>
+            <div class="summary-line">
+                <span>Блюда</span>
+                <strong>{{ total|floatformat:0 }} ₽</strong>
+            </div>
+            <p class="muted">Стоимость доставки зависит от зоны и будет рассчитана при оформлении.</p>
+            {% if total < restaurant.minimum_order %}
+            <p class="field-error">Минимальный заказ: {{ restaurant.minimum_order|floatformat:0 }} ₽</p>
+            {% endif %}<a class="btn btn-block" href="{% url 'checkout' %}">Оформить заказ</a>
+        </aside>
+        {% endif %}
+    </section>
+    {% endblock %}

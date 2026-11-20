@@ -1,0 +1,35 @@
+{% extends 'delivery/base.html' %}
+{% block title %}Поиск — ЕдаРядом{% endblock %}
+{% block content %}
+<section class="page-top">
+    <div class="container">
+        <span class="eyebrow">ПОИСК ПО МЕНЮ</span>
+        <h1>Результаты поиска</h1>
+        <form class="hero-search search-wide" action="{% url 'search' %}" method="get">
+            <label class="sr-only" for="search-q">Что ищем?</label>
+            <input id="search-q" name="q" value="{{ q }}" placeholder="Название блюда или ресторана">
+            <button class="btn" type="submit">Найти</button>
+        </form>
+    </div>
+</section>
+<section class="container section">
+    <p class="muted">Найдено: {{ page_obj.paginator.count }}</p>
+    <div class="result-list">
+        {% for dish in page_obj %}
+        <article class="result-item">
+            <div class="result-icon" aria-hidden="true">🍽</div>
+            <div>
+                <h2>{{ dish.name }}</h2>
+                <p>{{ dish.restaurant.name }} · {{ dish.description|truncatechars:100 }}</p>
+                <small>{{ dish.category.name }} · {{ dish.cooking_minutes }} мин</small>
+            </div>
+            <strong>{{ dish.price|floatformat:0 }} ₽</strong>
+            <a class="btn btn-small" href="{% url 'restaurant_detail' dish.restaurant.slug %}">К меню</a>
+        </article>
+        {% empty %}
+        <p>По запросу «{{ q|truncatechars:50 }}» ничего не найдено.</p>
+        {% endfor %}
+    </div>
+    {% include 'delivery/pagination.html' with page_obj=page_obj q=q %}
+</section>
+{% endblock %}

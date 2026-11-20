@@ -1,0 +1,55 @@
+{% extends 'delivery/base.html' %}{% block title %}Рестораны — ЕдаРядом{% endblock %}
+{% block content %}
+<section class="page-top">
+    <div class="container">
+        <span class="eyebrow">ВЫБИРАЙТЕ ЛЮБИМОЕ</span>
+        <h1>Рестораны рядом</h1>
+        <p>Каталог заведений с меню, рейтингом и понятными условиями доставки.</p>
+    </div>
+</section>
+<section class="container section">
+    <form class="filter-bar" method="get">
+        <label class="sr-only" for="q">Поиск ресторана</label>
+        <input id="q" name="q" value="{{ q }}" placeholder="Название или кухня">
+        <select name="category" aria-label="Категория">
+            <option value="">Все категории</option>
+            {% for c in categories %}
+            <option value="{{ c.slug }}" {% if selected_category == c.slug %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="sort" aria-label="Сортировка">
+            <option value="">Сначала популярные</option>
+            <option value="rating" {% if sort == 'rating' %}selected{% endif %}>По рейтингу</option>
+            <option value="price" {% if sort == 'price' %}selected{% endif %}>По минимальному заказу</option>
+        </select>
+        <button class="btn" type="submit">Применить</button>
+    </form>
+<div class="restaurant-grid">
+    {% for restaurant in page_obj %}
+    <article class="restaurant-card">
+        <a class="restaurant-visual visual-{{ forloop.counter|add:1 }}" href="{% url 'restaurant_detail' restaurant.slug %}">
+            {% if restaurant.image %}
+            <img src="{{ restaurant.image.url }}" alt="Блюда ресторана {{ restaurant.name }}" width="400" height="260" loading="lazy">
+            {% endif %}
+            <span>{{ restaurant.cuisine }}</span>
+            <strong>{{ restaurant.name|slice:':1' }}</strong>
+        </a>
+        <div class="card-body">
+            <div class="card-title">
+                <h2><a href="{% url 'restaurant_detail' restaurant.slug %}">{{ restaurant.name }}</a></h2>
+                <span class="rating"> {{ restaurant.rating|floatformat:1 }}</span>
+            </div>
+            <p>{{ restaurant.description|truncatechars:90 }}</p>
+            <div class="card-meta">
+                <span>{{ restaurant.delivery_minutes }} мин</span>
+                <span>Минимум {{ restaurant.minimum_order|floatformat:0 }} ₽</span>
+            </div>
+        </div>
+    </article>
+    {% empty %}
+    <p>Ничего не найдено. Попробуйте изменить запрос.</p>
+    {% endfor %}
+</div>
+{% include 'delivery/pagination.html' with page_obj=page_obj %}
+</section>
+{% endblock %}

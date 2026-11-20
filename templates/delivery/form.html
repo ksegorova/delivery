@@ -1,0 +1,33 @@
+{% extends 'delivery/base.html' %}
+{% block title %}
+{{ page_title }} — ЕдаРядом{% endblock %}
+{% block content %}
+<section class="container form-wrap section">
+    <div class="form-card">
+        <span class="eyebrow">ЕЩЁ ОДИН ШАГ</span>
+        <h1>{{ page_title }}</h1>
+        <form method="post" class="validate-form" novalidate>
+            {% csrf_token %}{% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}{% if field.errors %}
+                <div class="field-error">{{ field.errors|striptags }}</div>
+                {% endif %}
+                {% if field.help_text %}
+                <small>{{ field.help_text|safe }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button class="btn btn-block" type="submit">{{ button }}</button>
+        </form>
+        <p class="form-foot">Уже есть аккаунт? 
+            <a href="{% url 'login' %}">Войти</a>
+        </p>
+    </div>
+</section>
+{% endblock %}
